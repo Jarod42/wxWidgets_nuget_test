@@ -1,0 +1,38 @@
+name: 3.2.2.1
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+
+jobs:
+  v3_2_2_1-Release_32:
+    if: ${{ always() }}
+    uses: ./.github/workflows/premake5-vs2022.yml
+    with:
+      version: 3.2.2.1
+      config: Release
+      platform: Win32
+
+  v3_2_2_1-Release_64:
+    if: ${{ always() }}
+    uses: ./.github/workflows/premake5-vs2022.yml
+    with:
+      version: 3.2.2.1
+      config: Release
+      platform: x64
+
+  v3_2_2_1-Debug_32:
+    if: ${{ always() }}
+    uses: ./.github/workflows/premake5-vs2022.yml
+    with:
+      version: 3.2.2.1
+      config: Debug
+      platform: Win32
+
+  v3_2_2_1-Debug_64:
+    if: ${{ always() }}
+    uses: ./.github/workflows/premake5-vs2022.yml
+    with:
+      version: 3.2.2.1
+      config: Debug
+      platform: x64

@@ -1,0 +1,65 @@
+name: premake5
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      config:
+        required: true
+        type: string
+      platform:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+      config:
+        required: true
+        type: string
+      platform:
+        required: true
+        type: string
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ['windows-latest']
+
+    runs-on: ${{matrix.runner}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: install premake5
+      uses: Jarod42/install-premake5@v6
+
+    - name: run premake
+      run: premake5 vs2022 --wxWidgetsVersion=${{inputs.version}}
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: install nuget package
+      shell: bash
+      run: |
+        cd solution/vs2022
+        nuget install packages.config -OutputDirectory packages
+
+    - name: build
+      shell: bash
+      run: |
+        cd solution/vs2022
+        msbuild.exe /property:Configuration=${{inputs.config}} /property:Platform=${{inputs.platform}} Project.sln
+
+    - name: run
+      shell: bash
+      run: |
+        cd solution/vs2022/bin/${{inputs.config}}
+        ./app.exe
