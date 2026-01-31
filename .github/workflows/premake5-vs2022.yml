@@ -61,5 +61,5 @@ jobs:
     - name: run
       shell: bash
       run: |
-        cd solution/vs2022/bin/${{inputs.config}}
+        cd solution/vs2022/bin/${{inputs.platform}}/${{inputs.config}}
         ./app.exe
