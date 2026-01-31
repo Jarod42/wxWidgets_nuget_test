@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>wxWidgets</id>
+        <version>$version$</version>
+        <authors>Joris Dauphin</authors>
+        <owners>wxWidgets</owners>
+        <developmentDependency>true</developmentDependency>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>wxWidgets Nuget Package.</description>
+        <readme>docs\Readme.md</readme>
+        <dependencies>
+            <group targetFramework="native0.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*u_vc*.dll"  target="lib\native\x64\release\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*u.lib"      target="lib\native\x64\release\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*u.exp"      target="lib\native\x64\release\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\mswu\**\*.h"      target="lib\native\x64\release\" />
+
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*ud_vc*.dll" target="lib\native\x64\debug\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*ud.lib"     target="lib\native\x64\debug\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*ud.exp"     target="lib\native\x64\debug\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\wxmsw*ud_vc*.pdb" target="lib\native\x64\debug\" />
+        <file src="wxWidgets\build64\lib\vc_x64_dll\mswud\**\*.h"     target="lib\native\x64\debug\" />
+
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*u_vc.dll"       target="lib\native\Win32\release\" />
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*u.lib"          target="lib\native\Win32\release\" />
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*u.exp"          target="lib\native\Win32\release\" />
+        <file src="wxWidgets\build32\lib\vc_dll\mswu\**\*.h"          target="lib\native\Win32\release\" />
+
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*ud_vc.dll"      target="lib\native\Win32\debug\" />
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*ud.lib"         target="lib\native\Win32\debug\" />
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*ud.exp"         target="lib\native\Win32\debug\" />
+        <file src="wxWidgets\build32\lib\vc_dll\wxmsw*ud_vc.pdb"      target="lib\native\Win32\debug\" />
+        <file src="wxWidgets\build32\lib\vc_dll\mswud\**\*.h"         target="lib\native\Win32\debug\" />
+
+        <file src="wxWidgets\static\lib\vc_x64_lib\wxrc.exe"          target="tools\" />
+        <file src="wxWidgets\include\**\*.h"       target="include\" />
+        <file src="wxWidgets\include\**\*.cpp"     target="include\" />
+        <file src="bundle\nuget\wxWidgets.targets" target="build\" />
+        <file src="Readme.md"                      target="docs\" />
+    </files>
+</package>

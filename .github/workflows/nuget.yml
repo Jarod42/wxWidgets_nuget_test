@@ -1,0 +1,138 @@
+name: Create nuget package
+
+on:
+  workflow_call:
+    inputs:
+      wxWidgets-repo:
+        default: 'wxWidgets/wxWidgets'
+        type: string
+      wxWidgets-ref:
+        default: 'v3.2.8'
+        type: string
+      nuget-version:
+        default: '3.2.8'
+        type: string
+  workflow_dispatch:
+    inputs:
+      wxWidgets-repo:
+        default: 'wxWidgets/wxWidgets'
+        type: string
+      wxWidgets-ref:
+        default: 'v3.2.8'
+        type: string
+      nuget-version:
+        default: '3.2.8'
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: install premake5
+      uses: Jarod42/install-premake5@v7
+      with:
+        repository: Jarod42/premake-core
+        ref: nugetsource_directory
+
+    - uses: nuget/setup-nuget@v1
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: cmake --version
+      run: cmake --version
+      
+    - name: nuget version
+      run: nuget help
+
+    - name: Checkout wxWidgets
+      uses: actions/checkout@v6
+      with:
+        repository: ${{ inputs.wxWidgets-repo }}
+        ref: ${{ inputs.wxWidgets-ref }}
+        path: wxWidgets
+        fetch-depth: 1
+        submodules: recursive
+
+    - name: Build
+      run: |
+        cd wxWidgets
+        cmake -DwxBUILD_SHARED=ON -DwxUSE_STL=ON -DwxUSE_GUI=1 -DwxBUILD_PRECOMP=ON -DwxUSE_UNICODE=ON -DwxBUILD_MONOLITHIC=ON -DwxBUILD_VENDOR= -DwxBUILD_CXX_STANDARD=17 -A Win32 -B build32
+        cmake -DwxBUILD_SHARED=ON -DwxUSE_STL=ON -DwxUSE_GUI=1 -DwxBUILD_PRECOMP=ON -DwxUSE_UNICODE=ON -DwxBUILD_MONOLITHIC=ON -DwxBUILD_VENDOR= -DwxBUILD_CXX_STANDARD=17 -A x64   -B build64
+        cmake --build build32 --config Debug
+        cmake --build build32 --config Release
+        cmake --build build64 --config Debug
+        cmake --build build64 --config Release
+
+    - name: 'Tools'
+      run: |
+        cd wxWidgets
+        mkdir static
+        cd static
+        cmake ..  -DwxBUILD_SHARED=OFF -DwxUSE_STL=ON -DwxUSE_GUI=ON -DwxBUILD_PRECOMP=ON -DwxUSE_UNICODE=ON -DwxBUILD_MONOLITHIC=ON -DwxBUILD_VENDOR= -DwxBUILD_CXX_STANDARD=17
+        cmake --build . --config Release
+
+    - name: Build Nuget Package
+      run: |
+        nuget pack bundle\nuget\wxWidgets.nuspec -OutputFileNamesWithoutVersion -properties version=${{ inputs.nuget-version }} -OutputDirectory dist\ -BasePath .
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: nuget
+        path: dist/wxWidgets.nupkg
+
+    - name: list build output directory
+      shell: bash
+      run: |
+        echo listing wxWidgets/build64/lib/vc_x64_dll
+        ls -LR wxWidgets/build64/lib/vc_x64_dll
+        echo listing wxWidgets/build32/lib/vc_dll
+        ls -LR wxWidgets/build32/lib/vc_dll
+
+    # test package
+    - name: create local repo
+      run: |
+        nuget add dist\wxWidgets.nupkg -Source packages
+    
+    - name: run premake
+      shell: bash
+      run: premake5 vs2022 --wxWidgetsVersion=${{inputs.nuget-version}} --nugetsource=packages
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: install nuget package
+      run: |
+        cd solution\vs2022
+        nuget install packages.config -OutputDirectory packages -Source ${{ github.workspace }}\packages
+
+    # test x64 release
+    - name: build
+      run: |
+        cd solution\vs2022
+        msbuild.exe /property:Configuration=Release /property:Platform=x64 Project.sln
+
+    - name: run
+      shell: bash
+      run: |
+        cd solution/vs2022/bin/x64/Release
+        ./app.exe
+
+    # test x64 debug
+    - name: build
+      run: |
+        cd solution\vs2022
+        msbuild.exe /property:Configuration=Debug /property:Platform=x64 Project.sln
+
+## it strangely returns -1
+#    - name: run
+#      shell: bash
+#      run: |
+#        cd solution/vs2022/bin/x64/Debug
+#        ./app.exe

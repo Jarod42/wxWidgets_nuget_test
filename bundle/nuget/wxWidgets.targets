@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <PreprocessorDefinitions>WXUSINGDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\include\;$(MSBuildThisFileDirectory)..\lib\native\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)..\lib\native\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw32u.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>WXUSINGDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\include\;$(MSBuildThisFileDirectory)..\lib\native\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)..\lib\native\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw32ud.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <PropertyGroup Label="Globals">
+    <BuildDependsOn>$(BuildDependsOn);DeploywxWidgetsArtifacts</BuildDependsOn>
+  </PropertyGroup>
+  <ItemGroup>
+    <wxWidgetsArtifacts Include="$(MSBuildThisFileDirectory)..\lib\native\$(Platform)\$(Configuration)\*.dll" />
+    <wxWidgetsArtifacts Condition="'$(Configuration)'=='Debug'" Include="$(MSBuildThisFileDirectory)..\lib\native\$(Platform)\$(Configuration)\*.pdb" />
+  </ItemGroup>
+  <Target Name="DeploywxWidgetsArtifacts">
+    <Error Text="Package 'wxWidgets' currently only supports x86 and x64 build" Condition="'$(Platform)'!='x64' AND '$(Platform)'!='Win32'" />
+    <Copy SourceFiles="@(wxWidgetsArtifacts)" DestinationFolder="$(TargetDir)\" />
+  </Target>
+</Project>
