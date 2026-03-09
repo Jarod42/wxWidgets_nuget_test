@@ -39,7 +39,7 @@ jobs:
         repository: Jarod42/premake-core
         ref: nugetsource_directory
 
-    - uses: nuget/setup-nuget@v1
+    - uses: nuget/setup-nuget@v2
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -82,7 +82,7 @@ jobs:
         nuget pack bundle\nuget\wxWidgets.nuspec -OutputFileNamesWithoutVersion -properties version=${{ inputs.nuget-version }} -OutputDirectory dist\ -BasePath .
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: nuget
         path: dist/wxWidgets.nupkg
