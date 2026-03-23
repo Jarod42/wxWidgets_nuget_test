@@ -39,10 +39,10 @@ jobs:
         repository: Jarod42/premake-core
         ref: nugetsource_directory
 
-    - uses: nuget/setup-nuget@v1
+    - uses: nuget/setup-nuget@v2
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: cmake --version
       run: cmake --version
@@ -82,7 +82,7 @@ jobs:
         nuget pack bundle\nuget\wxWidgets.nuspec -OutputFileNamesWithoutVersion -properties version=${{ inputs.nuget-version }} -OutputDirectory dist\ -BasePath .
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: nuget
         path: dist/wxWidgets.nupkg
@@ -105,7 +105,7 @@ jobs:
       run: premake5 vs2022 --wxWidgetsVersion=${{inputs.nuget-version}} --nugetsource=packages
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: install nuget package
       run: |
